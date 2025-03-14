@@ -272,4 +272,50 @@ function initMajorSearch() {
 document.addEventListener('DOMContentLoaded', () => {
     initMajorSearch();
     // ... 其他初始化代码 ...
+});
+
+// 添加搜索功能
+const searchInput = document.querySelector('.search-bar input');
+const searchBtn = document.querySelector('.search-btn');
+
+// 更新搜索结果数量
+function updateSearchCount() {
+    const searchText = searchInput.value.trim().toLowerCase();
+    const jobItems = document.querySelectorAll('.job-item');
+    const announcementItems = document.querySelectorAll('.announcement-item');
+    
+    // 生成随机数（1-99之间）
+    const getRandomCount = () => Math.floor(Math.random() * 99) + 1;
+    
+    let jobCount = getRandomCount();
+    let announcementCount = getRandomCount();
+    
+    // 更新数量图标
+    const jobCountBadge = document.querySelector('[data-tab="jobs"] .count-badge');
+    const announcementCountBadge = document.querySelector('[data-tab="announcements"] .count-badge');
+    
+    if (searchText) {
+        jobCountBadge.style.display = 'flex';
+        announcementCountBadge.style.display = 'flex';
+        jobCountBadge.textContent = jobCount;
+        announcementCountBadge.textContent = announcementCount;
+    } else {
+        jobCountBadge.style.display = 'none';
+        announcementCountBadge.style.display = 'none';
+    }
+}
+
+// 添加搜索输入事件监听
+searchInput.addEventListener('input', updateSearchCount);
+
+// 添加搜索按钮点击事件
+searchBtn.addEventListener('click', () => {
+    updateSearchCount();
+});
+
+// 添加回车键搜索
+searchInput.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') {
+        updateSearchCount();
+    }
 }); 
