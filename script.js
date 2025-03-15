@@ -1,9 +1,11 @@
 document.addEventListener('DOMContentLoaded', function() {
     // 选项卡切换
-    const tabItems = document.querySelectorAll('.tab-item');
+    const tabItems = document.querySelectorAll('.tab-nav .tab-item');
     const tabLine = document.querySelector('.tab-line');
-    const announcementsList = document.querySelector('.announcements-list');
-    const positionsList = document.querySelector('.positions-list');
+    let announcementsList = document.querySelector('.announcements-list');
+    let positionsList = document.querySelector('.positions-list');
+    let customizeContent = document.querySelector('.customize-content');
+    let jobList = document.querySelector('.job-list');
     
     tabItems.forEach(item => {
         item.addEventListener('click', (e) => {
@@ -21,9 +23,11 @@ document.addEventListener('DOMContentLoaded', function() {
             if (tab === 'announcements') {
                 announcementsList.style.display = 'block';
                 positionsList.style.display = 'none';
+                customizeContent.style.display = 'none';
             } else {
                 announcementsList.style.display = 'none';
                 positionsList.style.display = 'block';
+                customizeContent.style.display = 'none';
             }
         });
     });
@@ -192,6 +196,42 @@ document.addEventListener('DOMContentLoaded', function() {
             window.location.href = `position-detail.html?id=${positionId}&title=${encodeURIComponent(title)}&department=${encodeURIComponent(department)}`;
         });
     });
+
+    // 底部导航栏处理
+    const navItems = document.querySelectorAll('.bottom-nav .nav-item');
+
+    navItems.forEach((item, index) => {
+        item.addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            // 移除所有导航项的激活状态
+            navItems.forEach(nav => nav.classList.remove('active'));
+            
+            // 激活当前点击的导航项
+            this.classList.add('active');
+            
+            // 根据点击的导航项显示相应内容
+            const text = this.querySelector('span').textContent;
+            console.log('点击的导航项：', text); // 添加调试日志
+
+            if (text === '定制') {
+                // 隐藏其他内容
+                announcementsList.style.display = 'none';
+                positionsList.style.display = 'none';
+                jobList.style.display = 'block';
+                customizeContent.style.display = 'block';
+                console.log('显示定制表单'); // 添加调试日志
+                // 初始化定制表单
+                initCustomizeForm();
+            } else if (text === '岗位') {
+                // 显示岗位列表
+                announcementsList.style.display = 'block';
+                positionsList.style.display = 'none';
+                customizeContent.style.display = 'none';
+                console.log('显示岗位列表'); // 添加调试日志
+            }
+        });
+    });
 });
 
 // 当前显示的卡片数量
@@ -200,7 +240,7 @@ const ITEMS_PER_PAGE = 5;
 
 // 获取所有职位卡片
 const jobItems = document.querySelectorAll('.job-item');
-const jobList = document.querySelector('.job-list');
+let jobList = document.querySelector('.job-list');
 
 // 初始化显示
 function initializeDisplay() {
@@ -242,110 +282,173 @@ window.addEventListener('scroll', () => {
     }, 100);
 });
 
-// 专业列表数据（示例数据）
-const majors = [
-    "计算机科学与技术", "软件工程", "信息管理与信息系统", "工商管理", 
-    "会计学", "金融学", "经济学", "法学", "汉语言文学", "英语", 
-    "新闻学", "广告学", "行政管理", "人力资源管理", "数学", "物理学",
-    "化学", "生物科学", "机械工程", "电气工程", "土木工程", "建筑学",
-    "医学", "护理学", "药学", "心理学", "教育学", "社会学"
+// 省份和专业数据
+const provinces = [
+    '北京市', '天津市', '河北省', '山西省', '内蒙古自治区', '辽宁省', '吉林省',
+    '黑龙江省', '上海市', '江苏省', '浙江省', '安徽省', '福建省', '江西省',
+    '山东省', '河南省', '湖北省', '湖南省', '广东省', '广西壮族自治区', '海南省',
+    '重庆市', '四川省', '贵州省', '云南省', '西藏自治区', '陕西省', '甘肃省',
+    '青海省', '宁夏回族自治区', '新疆维吾尔自治区'
 ];
 
-// 初始化专业搜索
-function initMajorSearch() {
-    const majorSearchInput = document.querySelector('.major-search-input');
-    const majorList = document.querySelector('.major-list');
-    const selectedMajorsContainer = document.querySelector('.selected-majors');
-    let selectedMajors = new Set();
+const majors = [
+    '计算机科学与技术', '软件工程', '信息工程', '电子信息工程', '通信工程',
+    '机械工程', '自动化', '电气工程', '土木工程', '建筑学', '工商管理',
+    '会计学', '金融学', '经济学', '法学', '中国语言文学', '英语', '日语',
+    '数学', '物理学', '化学', '生物科学', '医学', '护理学', '药学',
+    '教育学', '心理学', '新闻学', '广告学', '艺术设计'
+];
 
-    // 搜索输入事件
-    majorSearchInput.addEventListener('input', (e) => {
-        const searchText = e.target.value.trim().toLowerCase();
-        if (searchText === '') {
-            majorList.classList.remove('active');
-            return;
-        }
+// 初始化多选下拉菜单
+function initMultiSelect(wrapper, options, maxSelect = 3) {
+    const selectedOptions = wrapper.querySelector('.selected-options');
+    const dropdown = wrapper.querySelector('.options-dropdown');
+    const optionsList = wrapper.querySelector('.options-list');
+    const searchInput = wrapper.querySelector('.search-input');
+    const selectedValues = new Set();
 
-        const filteredMajors = majors.filter(major => 
-            major.toLowerCase().includes(searchText)
-        );
+    // 渲染选项
+    function renderOptions(items) {
+        optionsList.innerHTML = items.map(item => `
+            <div class="option-item ${selectedValues.has(item) ? 'selected' : ''}" data-value="${item}">
+                ${item}
+            </div>
+        `).join('');
+    }
 
-        if (filteredMajors.length > 0) {
-            renderMajorList(filteredMajors);
-            majorList.classList.add('active');
+    // 更新已选项显示
+    function updateSelectedDisplay() {
+        if (selectedValues.size === 0) {
+            selectedOptions.innerHTML = '<div class="placeholder">请选择</div>';
         } else {
-            majorList.classList.remove('active');
+            selectedOptions.innerHTML = Array.from(selectedValues).map(value => `
+                <div class="selected-tag">
+                    ${value}
+                    <svg class="remove" viewBox="0 0 24 24" data-value="${value}">
+                        <path fill="currentColor" d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+                    </svg>
+                </div>
+            `).join('');
+        }
+    }
+
+    // 初始化
+    renderOptions(options);
+    updateSelectedDisplay();
+
+    // 点击显示/隐藏下拉框
+    selectedOptions.addEventListener('click', () => {
+        dropdown.classList.toggle('active');
+        if (dropdown.classList.contains('active')) {
+            searchInput.focus();
         }
     });
 
-    // 渲染专业列表
-    function renderMajorList(majorsList) {
-        majorList.innerHTML = majorsList.map(major => `
-            <label class="${selectedMajors.has(major) ? 'selected' : ''}">
-                <input type="checkbox" value="${major}" ${selectedMajors.has(major) ? 'checked' : ''}>
-                <span>${major}</span>
-            </label>
-        `).join('');
+    // 搜索功能
+    searchInput.addEventListener('input', (e) => {
+        const value = e.target.value.toLowerCase();
+        const filtered = options.filter(item => 
+            item.toLowerCase().includes(value)
+        );
+        renderOptions(filtered);
+    });
 
-        // 添加点击事件
-        majorList.querySelectorAll('label').forEach(label => {
-            label.addEventListener('click', (e) => {
-                const major = label.querySelector('input').value;
-                if (selectedMajors.has(major)) {
-                    removeMajor(major);
-                } else if (selectedMajors.size < 3) {
-                    addMajor(major);
-                } else {
-                    e.preventDefault();
-                    alert('最多只能选择3个专业');
-                }
-            });
-        });
-    }
+    // 选项点击事件
+    optionsList.addEventListener('click', (e) => {
+        const item = e.target.closest('.option-item');
+        if (!item) return;
 
-    // 添加专业
-    function addMajor(major) {
-        selectedMajors.add(major);
-        updateSelectedMajors();
-        majorSearchInput.value = '';
-        majorList.classList.remove('active');
-    }
-
-    // 移除专业
-    function removeMajor(major) {
-        selectedMajors.delete(major);
-        updateSelectedMajors();
-    }
-
-    // 更新已选专业显示
-    function updateSelectedMajors() {
-        selectedMajorsContainer.innerHTML = Array.from(selectedMajors).map(major => `
-            <span class="selected-major-tag">
-                ${major}
-                <span class="remove-tag" data-major="${major}">×</span>
-            </span>
-        `).join('');
-
-        // 添加移除标签的点击事件
-        selectedMajorsContainer.querySelectorAll('.remove-tag').forEach(tag => {
-            tag.addEventListener('click', (e) => {
-                const major = e.target.dataset.major;
-                removeMajor(major);
-            });
-        });
-    }
-
-    // 点击外部关闭搜索结果
-    document.addEventListener('click', (e) => {
-        if (!e.target.closest('.major-search') && !e.target.closest('.major-list')) {
-            majorList.classList.remove('active');
+        const value = item.dataset.value;
+        if (selectedValues.has(value)) {
+            selectedValues.delete(value);
+        } else {
+            if (selectedValues.size >= maxSelect) {
+                alert(`最多只能选择${maxSelect}项`);
+                return;
+            }
+            selectedValues.add(value);
         }
+        
+        renderOptions(options);
+        updateSelectedDisplay();
+    });
+
+    // 删除已选项
+    selectedOptions.addEventListener('click', (e) => {
+        const removeBtn = e.target.closest('.remove');
+        if (!removeBtn) return;
+
+        const value = removeBtn.dataset.value;
+        selectedValues.delete(value);
+        renderOptions(options);
+        updateSelectedDisplay();
+    });
+
+    // 点击外部关闭下拉框
+    document.addEventListener('click', (e) => {
+        if (!wrapper.contains(e.target)) {
+            dropdown.classList.remove('active');
+        }
+    });
+
+    return {
+        getSelected: () => Array.from(selectedValues)
+    };
+}
+
+// 初始化定制表单
+function initCustomizeForm() {
+    const form = document.querySelector('.customize-form');
+    if (!form) return;
+
+    const provinceSelect = initMultiSelect(
+        form.querySelector('.province-select'),
+        provinces
+    );
+
+    const majorSelect = initMultiSelect(
+        form.querySelector('.major-select'),
+        majors
+    );
+
+    const submitBtn = form.querySelector('.customize-submit');
+    submitBtn.addEventListener('click', () => {
+        const examType = form.querySelector('[name="exam-type"]').value;
+        const education = form.querySelector('[name="education"]').value;
+        const selectedProvinces = provinceSelect.getSelected();
+        const selectedMajors = majorSelect.getSelected();
+
+        if (!examType) {
+            alert('请选择考试类型');
+            return;
+        }
+        if (!education) {
+            alert('请选择学历要求');
+            return;
+        }
+        if (selectedProvinces.length === 0) {
+            alert('请选择意向省份');
+            return;
+        }
+        if (selectedMajors.length === 0) {
+            alert('请选择专业要求');
+            return;
+        }
+
+        console.log('提交的数据:', {
+            examType,
+            education,
+            provinces: selectedProvinces,
+            majors: selectedMajors
+        });
+
+        alert('定制成功！我们会根据您的选择为您推送合适的职位。');
     });
 }
 
 // 页面加载完成后初始化
 document.addEventListener('DOMContentLoaded', () => {
-    initMajorSearch();
+    initCustomizeForm();
     // ... 其他初始化代码 ...
 });
 
