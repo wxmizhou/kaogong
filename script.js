@@ -401,52 +401,12 @@ function initMultiSelect(wrapper, options, maxSelect = 3) {
 
 // 初始化定制表单
 function initCustomizeForm() {
-    const form = document.querySelector('.customize-form');
-    if (!form) return;
-
-    const provinceSelect = initMultiSelect(
-        form.querySelector('.province-select'),
-        provinces
-    );
-
-    const majorSelect = initMultiSelect(
-        form.querySelector('.major-select'),
-        majors
-    );
-
-    const submitBtn = form.querySelector('.customize-submit');
-    submitBtn.addEventListener('click', () => {
-        const examType = form.querySelector('[name="exam-type"]').value;
-        const education = form.querySelector('[name="education"]').value;
-        const selectedProvinces = provinceSelect.getSelected();
-        const selectedMajors = majorSelect.getSelected();
-
-        if (!examType) {
-            alert('请选择考试类型');
-            return;
-        }
-        if (!education) {
-            alert('请选择学历要求');
-            return;
-        }
-        if (selectedProvinces.length === 0) {
-            alert('请选择意向省份');
-            return;
-        }
-        if (selectedMajors.length === 0) {
-            alert('请选择专业要求');
-            return;
-        }
-
-        console.log('提交的数据:', {
-            examType,
-            education,
-            provinces: selectedProvinces,
-            majors: selectedMajors
+    const startCustomizeBtn = document.querySelector('.customize-submit');
+    if (startCustomizeBtn) {
+        startCustomizeBtn.addEventListener('click', () => {
+            window.location.href = 'timeline.html';
         });
-
-        alert('定制成功！我们会根据您的选择为您推送合适的职位。');
-    });
+    }
 }
 
 // 页面加载完成后初始化
