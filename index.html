@@ -140,74 +140,74 @@
                     </div>
                 </div>
             </div>
-
-            <!-- 定制表单 -->
-            <div class="customize-content" style="display: none;">
-                <div class="customize-form">
-                    <div class="form-group">
-                        <label class="form-label">考试类型</label>
-                        <div class="select-wrapper">
-                            <select class="form-select" name="exam-type" id="examType">
-                                <option value="">请选择考试类型</option>
-                                <option value="gwy">公务员</option>
-                                <option value="sydw">事业单位</option>
-                                <option value="jszp">教师招聘</option>
-                                <option value="xd">选调生</option>
-                                <option value="yh">银行招聘</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label class="form-label">意向省份</label>
-                        <div class="multi-select-wrapper province-select">
-                            <div class="selected-options" id="selectedProvinces">
-                                <span class="placeholder">请选择省份（可多选）</span>
-                            </div>
-                            <div class="options-dropdown" id="provinceOptions">
-                                <div class="search-box">
-                                    <input type="text" placeholder="搜索省份" class="search-input">
-                                </div>
-                                <div class="options-list">
-                                    <!-- 省份选项将通过 JavaScript 动态添加 -->
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label class="form-label">学历要求</label>
-                        <div class="select-wrapper">
-                            <select class="form-select" name="education" id="education">
-                                <option value="">请选择学历要求</option>
-                                <option value="1">专科及以上</option>
-                                <option value="2">本科及以上</option>
-                                <option value="3">研究生及以上</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label class="form-label">专业要求</label>
-                        <div class="multi-select-wrapper major-select">
-                            <div class="selected-options" id="selectedMajors">
-                                <span class="placeholder">请选择专业（可多选）</span>
-                            </div>
-                            <div class="options-dropdown" id="majorOptions">
-                                <div class="search-box">
-                                    <input type="text" placeholder="搜索专业" class="search-input">
-                                </div>
-                                <div class="options-list">
-                                    <!-- 专业选项将通过 JavaScript 动态添加 -->
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <button class="customize-submit">开始定制</button>
-                </div>
-            </div>
         </main>
+
+        <!-- 定制表单（移到主内容区域外面） -->
+        <div class="customize-content" style="display: none;">
+            <div class="customize-form">
+                <div class="form-group">
+                    <label class="form-label">考试类型</label>
+                    <div class="select-wrapper">
+                        <select class="form-select" name="exam-type" id="examType">
+                            <option value="">请选择考试类型</option>
+                            <option value="gwy">公务员</option>
+                            <option value="sydw">事业单位</option>
+                            <option value="jszp">教师招聘</option>
+                            <option value="xd">选调生</option>
+                            <option value="yh">银行招聘</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">意向省份</label>
+                    <div class="multi-select-wrapper province-select">
+                        <div class="selected-options" id="selectedProvinces">
+                            <span class="placeholder">请选择省份（可多选）</span>
+                        </div>
+                        <div class="options-dropdown" id="provinceOptions">
+                            <div class="search-box">
+                                <input type="text" placeholder="搜索省份" class="search-input">
+                            </div>
+                            <div class="options-list">
+                                <!-- 省份选项将通过 JavaScript 动态添加 -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">学历要求</label>
+                    <div class="select-wrapper">
+                        <select class="form-select" name="education" id="education">
+                            <option value="">请选择学历要求</option>
+                            <option value="1">专科及以上</option>
+                            <option value="2">本科及以上</option>
+                            <option value="3">研究生及以上</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">专业要求</label>
+                    <div class="multi-select-wrapper major-select">
+                        <div class="selected-options" id="selectedMajors">
+                            <span class="placeholder">请选择专业（可多选）</span>
+                        </div>
+                        <div class="options-dropdown" id="majorOptions">
+                            <div class="search-box">
+                                <input type="text" placeholder="搜索专业" class="search-input">
+                            </div>
+                            <div class="options-list">
+                                <!-- 专业选项将通过 JavaScript 动态添加 -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <button class="customize-submit">开始定制</button>
+            </div>
+        </div>
 
         <!-- 筛选面板 -->
         <div class="filter-panel">

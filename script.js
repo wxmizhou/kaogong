@@ -199,6 +199,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // 底部导航栏处理
     const navItems = document.querySelectorAll('.bottom-nav .nav-item');
+    const mainContent = document.querySelector('.container > main');
+    const header = document.querySelector('.header');
 
     navItems.forEach((item, index) => {
         item.addEventListener('click', function(e) {
@@ -212,23 +214,24 @@ document.addEventListener('DOMContentLoaded', function() {
             
             // 根据点击的导航项显示相应内容
             const text = this.querySelector('span').textContent;
-            console.log('点击的导航项：', text); // 添加调试日志
+            console.log('点击的导航项：', text);
 
             if (text === '定制') {
-                // 隐藏其他内容
-                announcementsList.style.display = 'none';
-                positionsList.style.display = 'none';
-                jobList.style.display = 'block';
+                // 隐藏主内容和头部
+                mainContent.style.display = 'none';
+                header.style.display = 'none';
+                // 显示定制表单
                 customizeContent.style.display = 'block';
-                console.log('显示定制表单'); // 添加调试日志
+                console.log('显示定制表单');
                 // 初始化定制表单
                 initCustomizeForm();
             } else if (text === '岗位') {
-                // 显示岗位列表
-                announcementsList.style.display = 'block';
-                positionsList.style.display = 'none';
+                // 显示主内容和头部
+                mainContent.style.display = 'block';
+                header.style.display = 'block';
+                // 隐藏定制表单
                 customizeContent.style.display = 'none';
-                console.log('显示岗位列表'); // 添加调试日志
+                console.log('显示岗位列表');
             }
         });
     });
