@@ -137,9 +137,10 @@ document.addEventListener('DOMContentLoaded', function() {
     // 收藏功能
     const favoriteBtn = document.querySelector('.favorite-btn');
     if (favoriteBtn) {
-        favoriteBtn.addEventListener('click', function() {
+        favoriteBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
             this.classList.toggle('active');
-            // 这里可以添加收藏相关的后端接口调用
         });
     }
 
@@ -155,6 +156,40 @@ document.addEventListener('DOMContentLoaded', function() {
             
             // 跳转到详情页并传递ID参数
             window.location.href = `announcement-detail.html?id=${announcementId}`;
+        });
+    });
+
+    // 标签切换功能
+    const tabs = document.querySelectorAll('.detail-tabs .tab-item');
+    const contents = document.querySelectorAll('.tab-content');
+
+    tabs.forEach(tab => {
+        tab.addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            // 移除所有标签的激活状态
+            tabs.forEach(t => t.classList.remove('active'));
+            contents.forEach(c => c.style.display = 'none');
+            
+            // 激活当前标签
+            this.classList.add('active');
+            const targetId = this.getAttribute('data-tab') + '-content';
+            document.getElementById(targetId).style.display = 'block';
+        });
+    });
+
+    // 初始化岗位列表点击事件
+    const positionItems = document.querySelectorAll('.position-item');
+    if (!positionItems || positionItems.length === 0) return;
+
+    positionItems.forEach(item => {
+        item.addEventListener('click', function() {
+            const title = this.querySelector('.position-title').textContent;
+            const department = this.querySelector('.position-department').textContent;
+            const positionId = this.dataset.id || '1'; // 使用数据属性获取岗位ID，如果没有则使用默认值
+            
+            // 跳转到岗位详情页
+            window.location.href = `position-detail.html?id=${positionId}&title=${encodeURIComponent(title)}&department=${encodeURIComponent(department)}`;
         });
     });
 });
@@ -414,5 +449,111 @@ if (window.location.pathname.includes('announcement-detail.html')) {
     // 加载公告详情
     if (announcementId) {
         loadAnnouncementDetail(announcementId);
+    }
+}
+
+// 初始化公告详情页的标签切换
+function initDetailTabs() {
+    const detailTabs = document.querySelectorAll('.detail-tabs .tab-item');
+    const detailContents = document.querySelectorAll('.tab-content');
+    const positionsCount = document.querySelector('.positions-count');
+
+    if (!detailTabs || detailTabs.length === 0) return;
+
+    // 获取岗位列表中的实际数量并显示
+    const positionItems = document.querySelectorAll('.position-item');
+    if (positionsCount && positionItems) {
+        const count = positionItems.length;
+        positionsCount.textContent = count;
+        positionsCount.style.display = count > 0 ? 'flex' : 'none';
+    }
+
+    detailTabs.forEach(tab => {
+        tab.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            // 移除所有标签的激活状态
+            detailTabs.forEach(t => t.classList.remove('active'));
+            detailContents.forEach(c => c.style.display = 'none');
+            
+            // 激活当前标签
+            this.classList.add('active');
+            const targetId = this.getAttribute('data-tab') + '-content';
+            const targetContent = document.getElementById(targetId);
+            if (targetContent) {
+                targetContent.style.display = 'block';
+            }
+        });
+    });
+}
+
+// 初始化收藏按钮
+function initFavoriteButton() {
+    const favoriteBtn = document.querySelector('.favorite-btn');
+    if (favoriteBtn) {
+        favoriteBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            this.classList.toggle('active');
+        });
+    }
+}
+
+// 在详情页加载时获取并显示对应的岗位内容
+if (window.location.pathname.includes('position-detail.html')) {
+    const params = getUrlParams();
+    const positionId = params.id;
+    const title = params.title;
+    const department = params.department;
+    
+    // 根据ID加载对应的岗位内容
+    function loadPositionDetail(id, title, department) {
+        // 这里模拟从后端获取数据
+        // 实际项目中，这里应该调用后端API获取数据
+        const mockData = {
+            title: title || '小学语文教师',
+            code: `2024${id.padStart(3, '0')}`,
+            department: department || '武汉市洪山区教育局',
+            count: '5人',
+            time: {
+                start: '2024年3月15日 09:00',
+                end: '2024年3月25日 18:00'
+            },
+            requirements: {
+                education: ['全日制本科及以上学历', '需具有教育部门认证的学历学位证书'],
+                major: ['汉语言文学（必需）', '相近专业：中国语言文学、语文教育'],
+                age: ['35周岁以下（1989年3月15日后出生）', '应届毕业生放宽至40周岁']
+            },
+            jobInfo: {
+                unit: ['武汉市洪山区第一小学', '单位地址：武汉市洪山区珞瑜路123号'],
+                responsibilities: [
+                    '1. 承担小学语文学科教学工作',
+                    '2. 参与学校教研活动，开展课程研究',
+                    '3. 配合做好班主任工作',
+                    '4. 完成学校交办的其他工作'
+                ],
+                contact: [
+                    '联系人：张老师',
+                    '联系电话：027-12345678',
+                    '工作时间：周一至周五 9:00-17:00'
+                ]
+            }
+        };
+
+        // 更新页面内容
+        document.querySelector('.position-title').textContent = mockData.title;
+        document.querySelector('.position-code').textContent = `岗位代码：${mockData.code}`;
+        
+        // 更新核心信息
+        document.querySelector('.meta-item:nth-child(1) .meta-value').textContent = mockData.count;
+        document.querySelector('.meta-item:nth-child(2) .meta-value').textContent = mockData.department;
+        document.querySelector('.meta-item.full-width .meta-value').textContent = 
+            `${mockData.time.start} - ${mockData.time.end}`;
+    }
+
+    // 加载岗位详情
+    if (positionId) {
+        loadPositionDetail(positionId, title, department);
     }
 } 
