@@ -1,14 +1,30 @@
 document.addEventListener('DOMContentLoaded', function() {
     // 选项卡切换
     const tabItems = document.querySelectorAll('.tab-item');
+    const tabLine = document.querySelector('.tab-line');
+    const announcementsList = document.querySelector('.announcements-list');
+    const positionsList = document.querySelector('.positions-list');
     
-    tabItems.forEach(tab => {
-        tab.addEventListener('click', function(e) {
+    tabItems.forEach(item => {
+        item.addEventListener('click', (e) => {
             e.preventDefault();
-            // 移除其他选项卡的激活状态
-            tabItems.forEach(item => item.classList.remove('active'));
-            // 激活当前选项卡
-            this.classList.add('active');
+            const tab = item.dataset.tab;
+            
+            // 更新选项卡状态
+            tabItems.forEach(t => t.classList.remove('active'));
+            item.classList.add('active');
+            
+            // 更新底部线条位置
+            tabLine.classList.toggle('jobs', tab === 'jobs');
+            
+            // 更新列表显示
+            if (tab === 'announcements') {
+                announcementsList.style.display = 'block';
+                positionsList.style.display = 'none';
+            } else {
+                announcementsList.style.display = 'none';
+                positionsList.style.display = 'block';
+            }
         });
     });
 
