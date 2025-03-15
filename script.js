@@ -133,6 +133,30 @@ document.addEventListener('DOMContentLoaded', function() {
         // 关闭面板
         closeFilterPanel();
     });
+
+    // 收藏功能
+    const favoriteBtn = document.querySelector('.favorite-btn');
+    if (favoriteBtn) {
+        favoriteBtn.addEventListener('click', function() {
+            this.classList.toggle('active');
+            // 这里可以添加收藏相关的后端接口调用
+        });
+    }
+
+    // 添加公告卡片点击事件
+    const jobItems = document.querySelectorAll('.job-item');
+    jobItems.forEach(item => {
+        item.addEventListener('click', function(e) {
+            // 阻止事件冒泡
+            e.stopPropagation();
+            
+            // 获取当前公告的ID（从data属性中获取）
+            const announcementId = this.dataset.id;
+            
+            // 跳转到详情页并传递ID参数
+            window.location.href = `announcement-detail.html?id=${announcementId}`;
+        });
+    });
 });
 
 // 当前显示的卡片数量
@@ -334,4 +358,61 @@ searchInput.addEventListener('keypress', (e) => {
     if (e.key === 'Enter') {
         updateSearchCount();
     }
-}); 
+});
+
+// 添加获取URL参数的工具函数
+function getUrlParams() {
+    const params = new URLSearchParams(window.location.search);
+    return Object.fromEntries(params.entries());
+}
+
+// 在详情页加载时获取并显示对应的公告内容
+if (window.location.pathname.includes('announcement-detail.html')) {
+    const params = getUrlParams();
+    const announcementId = params.id;
+    
+    // 根据ID加载对应的公告内容
+    function loadAnnouncementDetail(id) {
+        // 这里模拟从后端获取数据
+        // 实际项目中，这里应该调用后端API获取数据
+        const mockData = {
+            title: `公告标题 - ${id}`,
+            meta: {
+                location: '湖北',
+                type: '教师',
+                education: '本科',
+                count: '23人'
+            },
+            signupTime: {
+                start: '2025年3月15日',
+                end: '2025年3月25日'
+            },
+            content: [
+                '根据湖北省教育厅关于2025年度教师招聘工作的统一部署，现面向全国公开招聘教师岗位23名。本次招聘坚持公开、公平、公正的原则，按照规定的程序和办法组织实施。',
+                '招聘对象为全日制普通高等院校本科及以上学历毕业生，年龄在35周岁以下（1990年3月15日后出生），具有教师资格证或承诺在入职前取得教师资格证。特别优秀的应届毕业生可适当放宽条件。',
+                '本次招聘采取网上报名方式，考试分为笔试和面试两个环节。笔试内容包括教育理论基础知识、教育教学能力、综合素质等方面。面试采用试讲、答辩相结合的方式，重点考察应聘者的教学设计能力、课堂教学能力、语言表达能力等专业素质。',
+                '工作地点主要分布在省内重点城市的优质学校，薪资待遇按照事业单位标准执行，享受五险一金等福利待遇。我们期待优秀的教育人才加入，共同为湖北省基础教育事业发展贡献力量。'
+            ]
+        };
+
+        // 更新页面内容
+        document.querySelector('.detail-title').textContent = mockData.title;
+        
+        // 更新元信息
+        const metaHtml = Object.values(mockData.meta).map(value => `<span>${value}</span>`).join('');
+        document.querySelector('.detail-meta').innerHTML = metaHtml;
+        
+        // 更新报名时间
+        document.querySelector('.signup-info .time').textContent = 
+            `${mockData.signupTime.start} ~ ${mockData.signupTime.end}`;
+        
+        // 更新正文内容
+        document.querySelector('.detail-content').innerHTML = 
+            mockData.content.map(paragraph => `<p>${paragraph}</p>`).join('');
+    }
+
+    // 加载公告详情
+    if (announcementId) {
+        loadAnnouncementDetail(announcementId);
+    }
+} 
